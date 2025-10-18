@@ -1,0 +1,38 @@
+# Git & IDE
+.git/
+.vs/
+.idea/
+*.user
+*.suo
+*.iml
+*.DotSettings.user
+
+# Build/Logs
+**/bin/
+**/obj/
+[Ll]og/
+[Ll]ogs/
+*.pdb
+*.cache
+*.tmp
+*.log
+TestResults/
+artifacts/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# NuGet
+*.nupkg
+*.snupkg
+
+# Scaffolding/varie
+ScaffoldingReadMe.txt
+*.binlog
+
+# Env/segreti locali (non necessari in build)
+appsettings.Development.json
+appsettings.*.Local.json
+secrets.json
+.env
