@@ -19,16 +19,8 @@ builder.Services.AddHttpClient<IFunTranslationApiClient, FunTranslationApiClient
 
 var app = builder.Build();
 
-// Swagger dev
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        // 👇 automatically collapse all response sections
-        c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
-    });
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.MapControllers();
 app.Run();
