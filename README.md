@@ -37,19 +37,20 @@ Open: **http://localhost:8080/swagger**
 
 ```
 truelayer-pokemon-api.sln
-├─ Pokemon.Api/          # ASP.NET Core Web API (Swagger)
-│  ├─ Controllers/       # PokemonController
-│  ├─ Dtos/              # API DTOs (optional)
-│  ├─ Mappers/           # mapping helpers
-│  ├─ appsettings.json   # config (no secrets)
+├─ Pokemon.Api/           # ASP.NET Core Web API (Swagger)
+│  ├─ Controllers/        # PokemonController
+│  ├─ Dtos/               # API DTOs (optional)
+│  ├─ Mappers/            # mapping helpers
+│  ├─ appsettings.json    # config (no secrets)
 │  └─ Program.cs
-├─ Pokemon.Core/         # Domain & contracts
-│  ├─ Interfaces/        # IPokeApiClient, IFunTranslationApiClient
-│  └─ Models/            # PokemonInfo, FunTranslation, …
-├─ Pokemon.Services/     # Implementations & external clients
-│  ├─ ApiClients/        # PokeApiClient, FunTranslationApiClient
-│  └─ Dtos/              # External API DTOs (internal)
-└─ Pokemon.Tests/        # xUnit tests
+├─ Pokemon.Core/          # Domain & contracts
+│  ├─ Interfaces/         # IPokeApiClient, IFunTranslationApiClient
+│  └─ Models/             # PokemonInfo, FunTranslation, …
+├─ Pokemon.Services/      # Implementations & external clients
+│  ├─ ApiClients/         # PokeApiClient, FunTranslationApiClient
+│  └─ Dtos/               # External API DTOs (internal)
+└─ Pokemon.Tests/         # xUnit tests
+   └─ ApiExternalTests.cs # External API Test ( PokeApi,  Fun Translation)
 ```
 
 ---
@@ -128,14 +129,28 @@ docker compose up --build
 ```bash
 dotnet test
 ```
+What’s covered:
 
+- PokéAPI (happy path): verifies species data for a known Pokémon (e.g., pikachu) — non-empty description, non-null habitat, and IsLegendary == false.
+
+- PokéAPI (unknown): calls with a clearly invalid name (e.g., definitely-not-a-pokemon) to assert the client returns null and the controller returns 404.
+
+Translations (2 tests, strict):
+
+- Shakespeare: requires success and a non-empty translated string for a sample English sentence.
+
+- Yoda: requires success and a non-empty translated string for a sample English sentence.
 ---
 
 ## 🧠 Error Handling & Logging
 
-- Unknown Pokémon → `404 Not Found`.
-- Translation failures (rate limits / API down) are logged; `/pokemon/translated/{name}` returns **`502 Bad Gateway`** with a small error payload. The non-translated endpoint is unaffected.
-- Logging via `ILogger<T>` in controllers/clients.
+The controller only returns **speaking, consistent errors** using `ProblemDetails`:
+
+- **400 Bad Request** – invalid or empty Pokémon name.
+- **404 Not Found** – Pokémon not found on PokéAPI.
+- **502 Bad Gateway** – failed (PokéAPI/FunTranslations: errors, timeouts, or rate limits).
+
+All errors include a clear **title** and **detail** message; 
 
 ---
 
